@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Substitution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-tertiary: #86868b;
+            --accent: #0071e3;
+            --accent-hover: #0077ED;
+            --success: #30d158;
+            --success-bg: #f0fdf4;
+            --error: #ff3b30;
+            --error-bg: #fef2f2;
+            --info-bg: #eff6ff;
+            --border: #d2d2d7;
+            --border-light: #e8e8ed;
+            --nav-bg: rgba(251, 251, 253, 0.8);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: rgba(0,0,0,0.04);
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+            background: rgba(0,113,227,0.08);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 80px 24px 20px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .hero-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(245,158,11,0.3);
+        }
+
+        .hero-icon svg {
+            width: 36px;
+            height: 36px;
+            color: #fff;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-weight: 400;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ── Main ── */
+        .main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px 24px 80px;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: all var(--transition);
+        }
+
+        /* ── Upload card ── */
+        .upload-card {
+            background: var(--surface);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(245,158,11,0.02) 0%, rgba(234,88,12,0.04) 100%);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .upload-card:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 4px 20px rgba(245,158,11,0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-card:hover::before { opacity: 1; }
+
+        .upload-card.loaded {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .upload-card.loaded::before { opacity: 0; }
+
+        .upload-card input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .upload-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .upload-card .card-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .upload-card .card-hint {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        .upload-card .file-name {
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 0.88rem;
+        }
+
+        /* ── Form elements ── */
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 0.88rem;
+            letter-spacing: -0.01em;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: var(--surface);
+            color: var(--text-primary);
+            transition: border-color var(--transition), box-shadow var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236e6e73' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0,113,227,0.12);
+        }
+
+        /* ── Status ── */
+        .status {
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            display: none;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .status.success { display: block; background: var(--success-bg); color: #166534; border: 1px solid #bbf7d0; }
+        .status.error { display: block; background: var(--error-bg); color: #991b1b; border: 1px solid #fecaca; }
+        .status.info { display: block; background: var(--info-bg); color: #1e40af; border: 1px solid #bfdbfe; }
+
+        /* ── Schedule ── */
+        .schedule-header {
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .schedule-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .schedule-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--surface);
+            display: none;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.83rem;
+            min-width: 600px;
+        }
+
+        .schedule-table th {
+            background: #fafafa;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .schedule-table td {
+            border-bottom: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            padding: 8px;
+            text-align: center;
+            vertical-align: top;
+            min-width: 130px;
+            height: 52px;
+        }
+
+        .schedule-table td:last-child { border-right: none; }
+        .schedule-table tr:last-child td { border-bottom: none; }
+
+        .schedule-table .time-col {
+            background: #fafafa;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            min-width: 100px;
+            font-size: 0.8rem;
+        }
+
+        .class-block {
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin: 3px 0;
+            font-size: 0.78rem;
+            line-height: 1.35;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .class-block:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .class-block.selected {
+            border-color: #f59e0b;
+            box-shadow: 0 4px 16px rgba(245,158,11,0.25);
+            transform: scale(1.06);
+        }
+
+        .class-block.clas {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            color: #1e40af;
+        }
+
+        .class-block.lab {
+            background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+            color: #166534;
+        }
+
+        .class-block .course-name { font-weight: 700; }
+        .class-block .course-detail { font-size: 0.73rem; opacity: 0.8; margin-top: 2px; }
+
+        /* ── Substitution panel ── */
+        .sub-panel {
+            display: none;
+            margin-top: 24px;
+            padding: 28px;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 1px solid #fde68a;
+            border-radius: var(--radius);
+            animation: fadeUp 0.4s ease;
+        }
+
+        .sub-panel h3 {
+            color: #92400e;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .sub-panel .session-info {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .sub-panel .session-info strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .sub-panel .form-label {
+            margin-top: 16px;
+        }
+
+        .sub-schedule-section {
+            display: none;
+            margin-top: 24px;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .sub-schedule-section h3 {
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .sub-schedule-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--surface);
+        }
+
+        .email-actions {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .email-script-box {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .email-script-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .email-script-subject {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-light);
+            word-break: break-word;
+        }
+
+        .email-script-body {
+            white-space: pre-wrap;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        .email-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 8px 18px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+
+        .email-copy-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* ── Mode selector ── */
+        .mode-card {
+            display: none;
+        }
+
+        .mode-card .mode-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mode-card .mode-row label {
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        /* ── Common Time section ── */
+        .ct-section {
+            display: none;
+        }
+
+        .ct-faculty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 6px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+
+        .ct-faculty-grid label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            user-select: none;
+        }
+
+        .ct-faculty-grid label:hover {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .ct-faculty-grid input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+        }
+
+        .ct-selected-count {
+            font-size: 0.82rem;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+
+        .ct-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(0,113,227,0.2);
+        }
+
+        .ct-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 16px rgba(0,113,227,0.3);
+            transform: translateY(-1px);
+        }
+
+        .ct-btn:disabled {
+            background: var(--text-tertiary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .ct-results {
+            display: none;
+            margin-top: 24px;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .ct-results h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .ct-day-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .ct-day-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .ct-slot {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            margin: 3px 4px;
+        }
+
+        .ct-slot.perfect {
+            background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+            color: #166534;
+        }
+
+        .ct-slot.near-miss {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .ct-conflict-names {
+            font-size: 0.78rem;
+            color: var(--error);
+            margin-top: 4px;
+            margin-left: 18px;
+        }
+
+        .ct-no-slots {
+            color: var(--text-tertiary);
+            font-size: 0.88rem;
+            font-style: italic;
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeUp 0.5s ease; }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(0,0,0,0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .hero { padding: 60px 20px 16px; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .main { padding: 20px 16px 60px; }
+            .nav-links a { font-size: 0.78rem; padding: 6px 10px; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">EduTools</a>
+            <div class="nav-links">
+                <a href="/">Gradebook</a>
+                <a href="/faculty" class="active">Faculty</a>
+                <a href="/records">Records</a>
+                <a href="/bonus">Bonus</a>
+                <a href="/referral">Referral</a>
+                <a href="/meeting">Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero fade-in">
+        <div class="hero-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+        </div>
+        <h1>Faculty Substitution</h1>
+        <p>Upload faculty assignments, view weekly schedules, and find available substitutes</p>
+    </div>
+
+    <div class="main fade-in">
+        <div class="upload-card" id="uploadBox">
+            <input type="file" id="fileInput" accept=".xlsx,.xls">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6e6e73">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+            </div>
+            <div class="card-title">Faculty Assignments File</div>
+            <div class="card-hint">Excel file (.xlsx) with faculty assignment data</div>
+            <div class="file-name" id="fileName"></div>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <!-- Mode selector (hidden until file is loaded) -->
+        <div class="card mode-card" id="modeCard">
+            <div class="mode-row">
+                <label for="modeSelect">Mode</label>
+                <select class="form-select" id="modeSelect" style="max-width:260px;">
+                    <option value="substitution">Substitution</option>
+                    <option value="common-time">Common Time Finder</option>
+                </select>
+            </div>
+            <div class="mode-row" style="margin-top:12px;">
+                <label for="scheduleType">Schedule</label>
+                <select class="form-select" id="scheduleType" style="max-width:260px;">
+                    <option value="normal">Normal Time</option>
+                    <option value="ramadan">🌙 Ramadan Time</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Substitution mode: faculty select -->
+        <div class="card" id="selectSection" style="display:none;">
+            <label class="form-label" for="facultySelect">Select Faculty Member</label>
+            <select class="form-select" id="facultySelect">
+                <option value="">-- Choose a faculty member --</option>
+            </select>
+        </div>
+
+        <!-- Common Time mode -->
+        <div class="card ct-section" id="ctSection">
+            <label class="form-label">Select Faculty Members (up to 10)</label>
+            <div class="ct-selected-count" id="ctCount">0 selected</div>
+            <div class="ct-faculty-grid" id="ctFacultyGrid"></div>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <label class="form-label" for="ctDuration" style="margin-bottom:0;">Minimum Duration</label>
+                <select class="form-select" id="ctDuration" style="max-width:180px;">
+                    <option value="10">10 minutes</option>
+                    <option value="20">20 minutes</option>
+                    <option value="30" selected>30 minutes</option>
+                    <option value="50">50 minutes</option>
+                    <option value="60">1 hour</option>
+                    <option value="90">1.5 hours</option>
+                    <option value="120">2 hours</option>
+                </select>
+            </div>
+
+            <button class="ct-btn" id="ctFindBtn" disabled>Find Common Free Time</button>
+            <div class="ct-results" id="ctResults"></div>
+        </div>
+
+        <div class="schedule-header" id="scheduleHeader">
+            <h2 id="scheduleTitle"></h2>
+        </div>
+
+        <div class="schedule-wrapper" id="scheduleWrapper">
+            <table class="schedule-table" id="scheduleTable"></table>
+        </div>
+
+        <div class="sub-panel" id="subPanel">
+            <h3>Substitute Session</h3>
+            <div class="session-info" id="sessionInfo"></div>
+
+            <label class="form-label" for="programSelect">Select Program</label>
+            <select class="form-select" id="programSelect">
+                <option value="">-- Choose a program --</option>
+            </select>
+
+            <label class="form-label" for="subFacultySelect" style="margin-top:16px;">Select Substitute Faculty</label>
+            <select class="form-select" id="subFacultySelect" disabled>
+                <option value="">-- Choose program first --</option>
+            </select>
+
+            <div class="sub-schedule-section" id="subScheduleSection">
+                <h3 id="subScheduleTitle"></h3>
+                <div class="sub-schedule-wrapper">
+                    <table class="schedule-table" id="subScheduleTable"></table>
+                </div>
+            </div>
+
+            <div class="email-actions" id="emailActions">
+                <div class="email-script-box">
+                    <div class="email-script-label">Subject</div>
+                    <div class="email-script-subject" id="emailSubject"></div>
+                    <div class="email-script-label">Body</div>
+                    <div class="email-script-body" id="emailBody"></div>
+                </div>
+                <button class="email-copy-btn" id="emailCopyBtn" onclick="copyEmailScript()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                    </svg>
+                    Copy to Clipboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadBox = document.getElementById('uploadBox');
+        const fileName = document.getElementById('fileName');
+        const statusEl = document.getElementById('status');
+        const selectSection = document.getElementById('selectSection');
+        const facultySelect = document.getElementById('facultySelect');
+        const scheduleHeader = document.getElementById('scheduleHeader');
+        const scheduleTitle = document.getElementById('scheduleTitle');
+        const scheduleWrapper = document.getElementById('scheduleWrapper');
+        const scheduleTable = document.getElementById('scheduleTable');
+        const subPanel = document.getElementById('subPanel');
+        const sessionInfo = document.getElementById('sessionInfo');
+        const programSelect = document.getElementById('programSelect');
+        const subFacultySelect = document.getElementById('subFacultySelect');
+
+        const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
+        const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'];
+
+        let currentFacultyName = '';
+        let selectedSession = null;
+        let currentScheduleData = null;
+        let scheduleType = 'normal';
+
+        fileInput.addEventListener('change', handleUpload);
+        facultySelect.addEventListener('change', handleFacultyChange);
+        programSelect.addEventListener('change', handleProgramChange);
+        subFacultySelect.addEventListener('change', handleSubFacultyChange);
+        document.getElementById('scheduleType').addEventListener('change', function() {
+            scheduleType = this.value;
+            // Re-render cached schedule if one is loaded (substitution mode)
+            if (currentScheduleData && document.getElementById('modeSelect').value === 'substitution') {
+                selectedSession = null;
+                subPanel.style.display = 'none';
+                renderSchedule(currentScheduleData.faculty, currentScheduleData.schedule);
+            }
+            // Clear common-time results when schedule type changes
+            document.getElementById('ctResults').style.display = 'none';
+        });
+
+        fetch('/faculty/status')
+            .then(r => r.json())
+            .then(data => {
+                if (data.exists && data.names && data.names.length > 0) {
+                    populateFacultyDropdown(data.names);
+                    uploadBox.classList.add('loaded');
+                    fileName.textContent = 'Previously uploaded file';
+                    showStatus('File loaded. Found ' + data.names.length + ' faculty members.', 'success');
+                }
+            })
+            .catch(() => {});
+
+        function populateFacultyDropdown(names) {
+            facultySelect.innerHTML = '<option value="">-- Choose a faculty member --</option>';
+            names.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                facultySelect.appendChild(opt);
+            });
+            selectSection.style.display = 'block';
+            scheduleHeader.style.display = 'none';
+            scheduleWrapper.style.display = 'none';
+        }
+
+        function handleUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileName.textContent = file.name;
+            uploadBox.classList.add('loaded');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showStatus('<span class="spinner"></span> Uploading and reading file...', 'info');
+
+            fetch('/faculty/upload', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showStatus(data.error, 'error');
+                        return;
+                    }
+
+                    showStatus('File loaded. Found ' + data.names.length + ' faculty members.', 'success');
+                    populateFacultyDropdown(data.names);
+                })
+                .catch(err => showStatus('Upload failed: ' + err, 'error'));
+        }
+
+        function handleFacultyChange() {
+            const name = facultySelect.value;
+            subPanel.style.display = 'none';
+            selectedSession = null;
+            if (!name) {
+                scheduleHeader.style.display = 'none';
+                scheduleWrapper.style.display = 'none';
+                return;
+            }
+            currentFacultyName = name;
+
+            showStatus('<span class="spinner"></span> Loading schedule...', 'info');
+
+            fetch('/faculty/data?name=' + encodeURIComponent(name))
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showStatus(data.error, 'error');
+                        return;
+                    }
+
+                    statusEl.className = 'status';
+                    statusEl.style.display = 'none';
+
+                    currentScheduleData = data;
+                    renderSchedule(data.faculty, data.schedule);
+                })
+                .catch(err => showStatus('Failed to load schedule: ' + err, 'error'));
+        }
+
+        function renderSchedule(facultyName, schedule) {
+            const isRamadan = scheduleType === 'ramadan';
+            scheduleTitle.textContent = facultyName + (isRamadan ? ' — Ramadan Schedule' : ' — Weekly Schedule');
+            scheduleHeader.style.display = 'block';
+
+            if (schedule.length === 0) {
+                scheduleTable.innerHTML = '<tr><td colspan="6" style="padding:32px;color:var(--text-tertiary);font-size:0.9rem;">No classes found for this faculty member.</td></tr>';
+                scheduleWrapper.style.display = 'block';
+                return;
+            }
+
+            const timeSlots = {};
+            schedule.forEach(item => {
+                const tStart = (isRamadan && item.ramadan_time_start) ? item.ramadan_time_start : item.time_start;
+                const tEnd   = (isRamadan && item.ramadan_time_end)   ? item.ramadan_time_end   : item.time_end;
+                const key = tStart + ' - ' + tEnd;
+                if (!timeSlots[key]) {
+                    timeSlots[key] = { start: tStart, end: tEnd, days: {} };
+                }
+                item.day_names.forEach(day => {
+                    if (!timeSlots[key].days[day]) {
+                        timeSlots[key].days[day] = [];
+                    }
+                    timeSlots[key].days[day].push({ ...item, _dispStart: tStart, _dispEnd: tEnd });
+                });
+            });
+
+            const sortedSlots = Object.values(timeSlots).sort((a, b) => a.start.localeCompare(b.start));
+
+            let html = '<thead><tr><th>Time</th>';
+            DAY_SHORT.forEach(d => { html += '<th>' + d + '</th>'; });
+            html += '</tr></thead><tbody>';
+
+            sortedSlots.forEach(slot => {
+                html += '<tr>';
+                html += '<td class="time-col">' + esc(slot.start) + ' - ' + esc(slot.end) + '</td>';
+
+                DAYS.forEach(day => {
+                    html += '<td>';
+                    if (slot.days[day]) {
+                        slot.days[day].forEach(item => {
+                            const cls = item.type.toLowerCase() === 'lab' ? 'lab' : 'clas';
+                            const activeRaw = (isRamadan && item.ramadan_time_raw) ? item.ramadan_time_raw : item.time_raw;
+                            const dataAttr = ' data-course="' + esc(item.course) + '"'
+                                + ' data-type="' + esc(item.type) + '"'
+                                + ' data-section="' + esc(item.section) + '"'
+                                + ' data-crn="' + esc(item.crn) + '"'
+                                + ' data-time="' + esc(item._dispStart + ' - ' + item._dispEnd) + '"'
+                                + ' data-time-raw="' + esc(activeRaw) + '"'
+                                + ' data-normal-time-raw="' + esc(item.time_raw) + '"'
+                                + ' data-ramadan-time-raw="' + esc(item.ramadan_time_raw || '') + '"'
+                                + ' data-days-raw="' + esc(item.days) + '"'
+                                + ' data-day="' + esc(day) + '"'
+                                + ' data-room="' + esc(item.room) + '"';
+                            html += '<div class="class-block ' + cls + '" onclick="selectSession(this)"' + dataAttr + '>';
+                            html += '<div class="course-name">' + esc(item.course) + '</div>';
+                            html += '<div class="course-detail">' + esc(item.type) + ' | ' + esc(item.section) + '</div>';
+                            html += '<div class="course-detail">' + esc(item.room) + '</div>';
+                            html += '</div>';
+                        });
+                    }
+                    html += '</td>';
+                });
+
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            scheduleTable.innerHTML = html;
+            scheduleWrapper.style.display = 'block';
+        }
+
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = str || '';
+            return d.innerHTML;
+        }
+
+        function selectSession(el) {
+            document.querySelectorAll('.class-block.selected').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+
+            // Use the active schedule type's raw time for substitution conflict checking
+            const activeTimeRaw = (scheduleType === 'ramadan' && el.dataset.ramadanTimeRaw)
+                ? el.dataset.ramadanTimeRaw
+                : (el.dataset.normalTimeRaw || el.dataset.timeRaw);
+
+            selectedSession = {
+                course: el.dataset.course,
+                type: el.dataset.type,
+                section: el.dataset.section,
+                crn: el.dataset.crn,
+                time: el.dataset.time,
+                timeRaw: activeTimeRaw,
+                daysRaw: el.dataset.daysRaw,
+                day: el.dataset.day,
+                room: el.dataset.room,
+            };
+
+            sessionInfo.innerHTML =
+                '<strong>' + esc(selectedSession.course) + '</strong> — '
+                + esc(selectedSession.type) + ' | Section ' + esc(selectedSession.section)
+                + '<br>' + esc(selectedSession.day) + ' | ' + esc(selectedSession.time)
+                + ' | Room ' + esc(selectedSession.room);
+
+            programSelect.value = '';
+            subFacultySelect.innerHTML = '<option value="">-- Choose program first --</option>';
+            subFacultySelect.disabled = true;
+
+            fetch('/faculty/programs')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) return;
+                    programSelect.innerHTML = '<option value="">-- Choose a program --</option>';
+                    data.programs.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p;
+                        opt.textContent = p;
+                        programSelect.appendChild(opt);
+                    });
+                });
+
+            subPanel.style.display = 'block';
+            subPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function handleProgramChange() {
+            const program = programSelect.value;
+            subFacultySelect.innerHTML = '<option value="">-- Loading... --</option>';
+            subFacultySelect.disabled = true;
+            document.getElementById('subScheduleSection').style.display = 'none';
+            document.getElementById('emailActions').style.display = 'none';
+
+            if (!program) {
+                subFacultySelect.innerHTML = '<option value="">-- Choose program first --</option>';
+                return;
+            }
+
+            let url = '/faculty/by-program?program=' + encodeURIComponent(program);
+            if (selectedSession) {
+                url += '&time=' + encodeURIComponent(selectedSession.timeRaw);
+                url += '&days=' + encodeURIComponent(selectedSession.daysRaw);
+                if (scheduleType === 'ramadan') {
+                    url += '&time_mode=ramadan';
+                }
+            }
+
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) return;
+                    subFacultySelect.innerHTML = '<option value="">-- Choose a faculty member --</option>';
+                    data.faculty.forEach(name => {
+                        if (name.toLowerCase() === currentFacultyName.toLowerCase()) return;
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        subFacultySelect.appendChild(opt);
+                    });
+                    if (data.busy && data.busy.length > 0) {
+                        const busyNames = data.busy.filter(n => n.toLowerCase() !== currentFacultyName.toLowerCase());
+                        if (busyNames.length > 0) {
+                            const group = document.createElement('optgroup');
+                            group.label = 'Busy / Outside shift';
+                            busyNames.forEach(name => {
+                                const opt = document.createElement('option');
+                                opt.value = name;
+                                opt.textContent = name;
+                                opt.style.color = '#dc2626';
+                                opt.dataset.busy = 'true';
+                                group.appendChild(opt);
+                            });
+                            subFacultySelect.appendChild(group);
+                        }
+                    }
+                    subFacultySelect.disabled = false;
+                });
+        }
+
+        function handleSubFacultyChange() {
+            const subName = subFacultySelect.value;
+            const subScheduleSection = document.getElementById('subScheduleSection');
+            const emailActions = document.getElementById('emailActions');
+
+            subScheduleSection.style.display = 'none';
+            emailActions.style.display = 'none';
+
+            if (!subName || !selectedSession) return;
+
+            const selectedOpt = subFacultySelect.selectedOptions[0];
+            const isBusy = selectedOpt && selectedOpt.dataset.busy === 'true';
+
+            fetch('/faculty/data?name=' + encodeURIComponent(subName))
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showStatus(data.error, 'error');
+                        return;
+                    }
+
+                    renderSubSchedule(subName, data.schedule);
+
+                    if (isBusy) {
+                        buildEmail(subName);
+                        showStatus(
+                            '<strong>' + esc(subName) + '</strong> is <span style="color:#dc2626;font-weight:700;">busy / outside shift</span> during this time slot. '
+                            + 'Review their schedule below. You can still send the substitution request.',
+                            'error'
+                        );
+                    } else {
+                        buildEmail(subName);
+                        showStatus(
+                            'Substitute selected: <strong>' + esc(subName) + '</strong> will cover <strong>'
+                            + esc(selectedSession.course) + ' ' + esc(selectedSession.type)
+                            + '</strong> on ' + esc(selectedSession.day) + ' at ' + esc(selectedSession.time),
+                            'success'
+                        );
+                    }
+                })
+                .catch(err => showStatus('Failed to load substitute schedule: ' + err, 'error'));
+        }
+
+        function renderSubSchedule(name, schedule) {
+            const subScheduleSection = document.getElementById('subScheduleSection');
+            const subScheduleTitle = document.getElementById('subScheduleTitle');
+            const subScheduleTable = document.getElementById('subScheduleTable');
+            const isRamadan = scheduleType === 'ramadan';
+
+            subScheduleTitle.textContent = name + (isRamadan ? ' — Ramadan Schedule' : ' — Current Schedule');
+
+            if (schedule.length === 0) {
+                subScheduleTable.innerHTML = '<tr><td colspan="6" style="padding:32px;color:var(--text-tertiary);">No classes found.</td></tr>';
+                subScheduleSection.style.display = 'block';
+                return;
+            }
+
+            const timeSlots = {};
+            schedule.forEach(item => {
+                const tStart = (isRamadan && item.ramadan_time_start) ? item.ramadan_time_start : item.time_start;
+                const tEnd   = (isRamadan && item.ramadan_time_end)   ? item.ramadan_time_end   : item.time_end;
+                const key = tStart + ' - ' + tEnd;
+                if (!timeSlots[key]) {
+                    timeSlots[key] = { start: tStart, end: tEnd, days: {} };
+                }
+                item.day_names.forEach(day => {
+                    if (!timeSlots[key].days[day]) timeSlots[key].days[day] = [];
+                    timeSlots[key].days[day].push({ ...item, _dispStart: tStart, _dispEnd: tEnd });
+                });
+            });
+
+            const sortedSlots = Object.values(timeSlots).sort((a, b) => a.start.localeCompare(b.start));
+
+            let html = '<thead><tr><th>Time</th>';
+            DAY_SHORT.forEach(d => { html += '<th>' + d + '</th>'; });
+            html += '</tr></thead><tbody>';
+
+            sortedSlots.forEach(slot => {
+                html += '<tr>';
+                html += '<td class="time-col">' + esc(slot.start) + ' - ' + esc(slot.end) + '</td>';
+                DAYS.forEach(day => {
+                    html += '<td>';
+                    if (slot.days[day]) {
+                        slot.days[day].forEach(item => {
+                            const cls = item.type.toLowerCase() === 'lab' ? 'lab' : 'clas';
+                            html += '<div class="class-block ' + cls + '" style="cursor:default;">';
+                            html += '<div class="course-name">' + esc(item.course) + '</div>';
+                            html += '<div class="course-detail">' + esc(item.type) + ' | ' + esc(item.section) + '</div>';
+                            html += '<div class="course-detail">' + esc(item.room) + '</div>';
+                            html += '</div>';
+                        });
+                    }
+                    html += '</td>';
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            subScheduleTable.innerHTML = html;
+            subScheduleSection.style.display = 'block';
+            subScheduleSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function buildEmail(subName) {
+            const s = selectedSession;
+            const DAY_MAP_RAW = { U: 'Sunday', M: 'Monday', T: 'Tuesday', W: 'Wednesday', R: 'Thursday' };
+            const daysList = s.daysRaw.split('').map(d => DAY_MAP_RAW[d] || d).join(', ');
+
+            const subject = 'Faculty Substitution: ' + s.course + ' ' + s.type + ' - ' + currentFacultyName + ' -> ' + subName;
+
+            const body = 'Dear Colleague,\n\n'
+                + 'Please find below the details of the faculty substitution:\n\n'
+                + '--- Substitution Details ---\n'
+                + 'Original Faculty: ' + currentFacultyName + '\n'
+                + 'Substitute Faculty: ' + subName + '\n\n'
+                + 'Course: ' + s.course + '\n'
+                + 'Type: ' + s.type + '\n'
+                + 'Section: ' + s.section + '\n'
+                + 'CRN: ' + s.crn + '\n'
+                + 'Day(s): ' + daysList + '\n'
+                + 'Time: ' + s.time + '\n'
+                + 'Room: ' + s.room + '\n\n'
+                + 'Please confirm the substitution at your earliest convenience.\n\n'
+                + 'Best regards';
+
+            document.getElementById('emailSubject').textContent = subject;
+            document.getElementById('emailBody').textContent = body;
+            document.getElementById('emailCopyBtn').textContent = 'Copy to Clipboard';
+            document.getElementById('emailActions').style.display = 'block';
+            document.getElementById('emailActions').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function copyEmailScript() {
+            const subject = document.getElementById('emailSubject').textContent;
+            const body = document.getElementById('emailBody').textContent;
+            const full = 'Subject: ' + subject + '\n\n' + body;
+            navigator.clipboard.writeText(full).then(() => {
+                const btn = document.getElementById('emailCopyBtn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000);
+            });
+        }
+
+        function showStatus(msg, type) {
+            statusEl.innerHTML = msg;
+            statusEl.className = 'status ' + type;
+        }
+
+        /* ═══════════════════════════════════════
+           Mode Switcher & Common Time Finder
+           ═══════════════════════════════════════ */
+
+        const modeCard = document.getElementById('modeCard');
+        const modeSelect = document.getElementById('modeSelect');
+        const ctSection = document.getElementById('ctSection');
+        const ctFacultyGrid = document.getElementById('ctFacultyGrid');
+        const ctCount = document.getElementById('ctCount');
+        const ctFindBtn = document.getElementById('ctFindBtn');
+        const ctDuration = document.getElementById('ctDuration');
+        const ctResults = document.getElementById('ctResults');
+
+        let allFacultyNames = [];
+
+        modeSelect.addEventListener('change', handleModeChange);
+        ctFindBtn.addEventListener('click', findCommonTime);
+
+        function handleModeChange() {
+            const mode = modeSelect.value;
+            // Hide everything first
+            selectSection.style.display = 'none';
+            scheduleHeader.style.display = 'none';
+            scheduleWrapper.style.display = 'none';
+            subPanel.style.display = 'none';
+            ctSection.style.display = 'none';
+            statusEl.className = 'status';
+            statusEl.style.display = 'none';
+
+            if (mode === 'substitution') {
+                selectSection.style.display = 'block';
+            } else if (mode === 'common-time') {
+                ctSection.style.display = 'block';
+                ctResults.style.display = 'none';
+            }
+        }
+
+        // Patch populateFacultyDropdown to also populate common-time checkboxes and show mode card
+        const _origPopulate = populateFacultyDropdown;
+        populateFacultyDropdown = function(names) {
+            allFacultyNames = names;
+            _origPopulate(names);
+            modeCard.style.display = 'block';
+            buildCTCheckboxes(names);
+            // Re-apply current mode visibility
+            handleModeChange();
+        };
+
+        function buildCTCheckboxes(names) {
+            ctFacultyGrid.innerHTML = '';
+            names.forEach(name => {
+                const label = document.createElement('label');
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = name;
+                cb.addEventListener('change', updateCTCount);
+                label.appendChild(cb);
+                label.appendChild(document.createTextNode(name));
+                ctFacultyGrid.appendChild(label);
+            });
+            updateCTCount();
+        }
+
+        function updateCTCount() {
+            const checked = ctFacultyGrid.querySelectorAll('input:checked');
+            const count = checked.length;
+            ctCount.textContent = count + ' selected' + (count > 10 ? ' (max 10)' : '');
+
+            // Enforce max 10
+            if (count >= 10) {
+                ctFacultyGrid.querySelectorAll('input:not(:checked)').forEach(cb => cb.disabled = true);
+            } else {
+                ctFacultyGrid.querySelectorAll('input').forEach(cb => cb.disabled = false);
+            }
+
+            ctFindBtn.disabled = count < 2;
+        }
+
+        /* ── Time helpers ── */
+        const CT_DAY_LETTERS = ['U', 'M', 'T', 'W', 'R'];
+        const CT_DAY_NAMES = { U: 'Sunday', M: 'Monday', T: 'Tuesday', W: 'Wednesday', R: 'Thursday' };
+        const CT_START = 480;  // 08:00
+        const CT_END = 900;    // 15:00
+
+        function timeToMin(hhmm) {
+            // "08:00" → 480
+            const parts = hhmm.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+
+        function minToTime(m) {
+            const h = String(Math.floor(m / 60)).padStart(2, '0');
+            const mm = String(m % 60).padStart(2, '0');
+            return h + ':' + mm;
+        }
+
+        function subtractInterval(freeList, busyStart, busyEnd) {
+            // freeList: [[s,e], ...], subtract [busyStart, busyEnd] → new list
+            const result = [];
+            for (const [s, e] of freeList) {
+                if (busyEnd <= s || busyStart >= e) {
+                    result.push([s, e]);
+                } else {
+                    if (s < busyStart) result.push([s, busyStart]);
+                    if (busyEnd < e) result.push([busyEnd, e]);
+                }
+            }
+            return result;
+        }
+
+        function intersectIntervals(listA, listB) {
+            // Intersect two sorted interval lists
+            const result = [];
+            let i = 0, j = 0;
+            while (i < listA.length && j < listB.length) {
+                const s = Math.max(listA[i][0], listB[j][0]);
+                const e = Math.min(listA[i][1], listB[j][1]);
+                if (s < e) result.push([s, e]);
+                if (listA[i][1] < listB[j][1]) i++;
+                else j++;
+            }
+            return result;
+        }
+
+        async function findCommonTime() {
+            const checked = Array.from(ctFacultyGrid.querySelectorAll('input:checked'));
+            const names = checked.map(cb => cb.value);
+            if (names.length < 2) return;
+
+            const minDuration = parseInt(ctDuration.value) || 30;
+            const isRamadan = scheduleType === 'ramadan';
+
+            ctFindBtn.disabled = true;
+            ctFindBtn.textContent = 'Loading...';
+            ctResults.style.display = 'none';
+            showStatus('<span class="spinner"></span> Fetching schedules for ' + names.length + ' faculty members...', 'info');
+
+            try {
+                // Fetch all schedules in parallel
+                const responses = await Promise.all(
+                    names.map(n => fetch('/faculty/data?name=' + encodeURIComponent(n)).then(r => r.json()))
+                );
+
+                // Build per-faculty, per-day busy intervals
+                // facultyBusy[name][dayLetter] = [{start, end, course, type}]
+                const facultyBusy = {};
+                for (let i = 0; i < names.length; i++) {
+                    const data = responses[i];
+                    if (data.error) {
+                        showStatus('Error loading ' + esc(names[i]) + ': ' + esc(data.error), 'error');
+                        return;
+                    }
+                    const busy = {};
+                    CT_DAY_LETTERS.forEach(d => busy[d] = []);
+                    data.schedule.forEach(item => {
+                        const tStart = (isRamadan && item.ramadan_time_start) ? item.ramadan_time_start : item.time_start;
+                        const tEnd   = (isRamadan && item.ramadan_time_end)   ? item.ramadan_time_end   : item.time_end;
+                        if (!tStart || !tEnd) return;
+                        const s = timeToMin(tStart);
+                        const e = timeToMin(tEnd);
+                        for (const d of item.days) {
+                            if (busy[d]) {
+                                busy[d].push({ start: s, end: e, course: item.course, type: item.type });
+                            }
+                        }
+                    });
+                    facultyBusy[names[i]] = busy;
+                }
+
+                // For each day, compute common free time & near-misses
+                let html = '<h3>Common Free Time' + (isRamadan ? ' — Ramadan Schedule' : ' (8:00 AM – 3:00 PM)') + '</h3>';
+                let hasAnySlot = false;
+
+                CT_DAY_LETTERS.forEach(dayLetter => {
+                    const dayName = CT_DAY_NAMES[dayLetter];
+
+                    // Perfect common free: intersect all faculty's free intervals
+                    let commonFree = [[CT_START, CT_END]];
+                    names.forEach(name => {
+                        let free = [[CT_START, CT_END]];
+                        facultyBusy[name][dayLetter].forEach(b => {
+                            free = subtractInterval(free, b.start, b.end);
+                        });
+                        commonFree = intersectIntervals(commonFree, free);
+                    });
+
+                    // Filter out tiny slots (< 10 min)
+                    commonFree = commonFree.filter(([s, e]) => e - s >= minDuration);
+
+                    // Near-miss: for each faculty-excluded individually, find slots
+                    const nearMisses = [];
+                    if (commonFree.length === 0 && names.length >= 3) {
+                        // Try excluding each single faculty and see if slots open up
+                        for (let excIdx = 0; excIdx < names.length; excIdx++) {
+                            let freeWithout = [[CT_START, CT_END]];
+                            names.forEach((name, idx) => {
+                                if (idx === excIdx) return;
+                                let free = [[CT_START, CT_END]];
+                                facultyBusy[name][dayLetter].forEach(b => {
+                                    free = subtractInterval(free, b.start, b.end);
+                                });
+                                freeWithout = intersectIntervals(freeWithout, free);
+                            });
+                            freeWithout = freeWithout.filter(([s, e]) => e - s >= minDuration);
+                            if (freeWithout.length > 0) {
+                                // Check what conflicts the excluded faculty has
+                                const conflicts = [];
+                                freeWithout.forEach(([slotS, slotE]) => {
+                                    facultyBusy[names[excIdx]][dayLetter].forEach(b => {
+                                        if (b.start < slotE && b.end > slotS) {
+                                            conflicts.push(b.course + ' ' + b.type);
+                                        }
+                                    });
+                                });
+                                nearMisses.push({
+                                    excluded: names[excIdx],
+                                    slots: freeWithout,
+                                    conflicts: [...new Set(conflicts)]
+                                });
+                            }
+                        }
+                    }
+
+                    // Also find near-misses even when perfect slots exist (wider slots with 1 person out)
+                    const widerNearMisses = [];
+                    if (names.length >= 3) {
+                        for (let excIdx = 0; excIdx < names.length; excIdx++) {
+                            let freeWithout = [[CT_START, CT_END]];
+                            names.forEach((name, idx) => {
+                                if (idx === excIdx) return;
+                                let free = [[CT_START, CT_END]];
+                                facultyBusy[name][dayLetter].forEach(b => {
+                                    free = subtractInterval(free, b.start, b.end);
+                                });
+                                freeWithout = intersectIntervals(freeWithout, free);
+                            });
+                            freeWithout = freeWithout.filter(([s, e]) => e - s >= minDuration);
+
+                            // Only show if this gives WIDER slots than the perfect common
+                            const totalWithout = freeWithout.reduce((sum, [s, e]) => sum + (e - s), 0);
+                            const totalPerfect = commonFree.reduce((sum, [s, e]) => sum + (e - s), 0);
+                            if (totalWithout > totalPerfect) {
+                                const conflicts = [];
+                                freeWithout.forEach(([slotS, slotE]) => {
+                                    facultyBusy[names[excIdx]][dayLetter].forEach(b => {
+                                        if (b.start < slotE && b.end > slotS) {
+                                            conflicts.push(b.course + ' ' + b.type);
+                                        }
+                                    });
+                                });
+                                if (conflicts.length > 0) {
+                                    widerNearMisses.push({
+                                        excluded: names[excIdx],
+                                        slots: freeWithout,
+                                        conflicts: [...new Set(conflicts)]
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    const allNearMisses = commonFree.length === 0 ? nearMisses : widerNearMisses;
+
+                    if (commonFree.length === 0 && allNearMisses.length === 0) return;
+                    hasAnySlot = true;
+
+                    html += '<div class="ct-day-card">';
+                    html += '<h4>' + dayName + '</h4>';
+
+                    if (commonFree.length > 0) {
+                        commonFree.forEach(([s, e]) => {
+                            html += '<span class="ct-slot perfect">' + minToTime(s) + ' – ' + minToTime(e) + '</span>';
+                        });
+                    } else {
+                        html += '<div class="ct-no-slots">No time when all ' + names.length + ' are free</div>';
+                    }
+
+                    if (allNearMisses.length > 0) {
+                        html += '<div style="margin-top:12px;font-size:0.84rem;color:var(--text-secondary);font-weight:600;">'
+                            + (commonFree.length > 0 ? 'Wider slots if one person is excluded:' : 'Near-miss slots (all but one are free):')
+                            + '</div>';
+                        allNearMisses.forEach(nm => {
+                            nm.slots.forEach(([s, e]) => {
+                                html += '<span class="ct-slot near-miss">' + minToTime(s) + ' – ' + minToTime(e) + '</span>';
+                            });
+                            html += '<div class="ct-conflict-names">' + esc(nm.excluded)
+                                + ' — has ' + nm.conflicts.map(c => esc(c)).join(', ') + '</div>';
+                        });
+                    }
+
+                    html += '</div>';
+                });
+
+                if (!hasAnySlot) {
+                    html += '<div class="ct-day-card"><div class="ct-no-slots">No common free time found between the selected faculty members during 8:00 AM – 3:00 PM on any day.</div></div>';
+                }
+
+                ctResults.innerHTML = html;
+                ctResults.style.display = 'block';
+                statusEl.className = 'status';
+                statusEl.style.display = 'none';
+
+            } catch (err) {
+                showStatus('Error: ' + err, 'error');
+            } finally {
+                ctFindBtn.disabled = false;
+                ctFindBtn.textContent = 'Find Common Free Time';
+            }
+        }
+    </script>
+</body>
+</html>

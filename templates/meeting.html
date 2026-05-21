@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Minutes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-tertiary: #86868b;
+            --accent: #0071e3;
+            --error: #ff3b30;
+            --error-bg: #fef2f2;
+            --success-bg: #f0fdf4;
+            --border: #d2d2d7;
+            --border-light: #e8e8ed;
+            --nav-bg: rgba(251, 251, 253, 0.8);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --purple: #6366f1;
+            --purple-light: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            height: 52px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-brand { font-weight: 700; font-size: 1.05rem; color: var(--text-primary); text-decoration: none; letter-spacing: -0.02em; }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.82rem; font-weight: 500;
+            padding: 6px 14px; border-radius: 20px;
+            transition: all var(--transition);
+        }
+        .nav-links a:hover { color: var(--text-primary); background: rgba(0,0,0,0.04); }
+        .nav-links a.active { color: var(--purple); background: rgba(99,102,241,0.08); }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center; padding: 64px 24px 32px;
+            max-width: 680px; margin: 0 auto;
+        }
+        .hero-icon {
+            width: 64px; height: 64px; border-radius: 20px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(99,102,241,0.3);
+        }
+        .hero h1 {
+            font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em;
+            line-height: 1.1; margin-bottom: 10px;
+            background: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero p { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* ── Main ── */
+        main { max-width: 820px; margin: 0 auto; padding: 0 24px 80px; }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--surface); border-radius: var(--radius);
+            border: 1px solid var(--border-light); box-shadow: var(--shadow);
+            padding: 28px; margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: 20px;
+        }
+
+        /* ── Form ── */
+        .form-row { display: flex; gap: 14px; margin-bottom: 14px; }
+        .form-row:last-child { margin-bottom: 0; }
+        .form-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .form-group.narrow { flex: 0 0 110px; }
+        .form-group.medium { flex: 0 0 160px; }
+
+        label { font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); }
+        label .req { color: var(--error); margin-left: 2px; }
+
+        input[type="text"], input[type="date"], input[type="time"],
+        input[type="number"], textarea {
+            padding: 10px 14px; border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm); font-size: 0.92rem;
+            font-family: inherit; color: var(--text-primary);
+            background: var(--bg); width: 100%; outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        input:focus, textarea:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+            background: var(--surface);
+        }
+        textarea { resize: vertical; min-height: 88px; line-height: 1.5; }
+
+        /* ── Attendee rows ── */
+        .att-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .att-row input { flex: 1; }
+        .att-row .att-dept { flex: 1.3; }
+
+        /* ── Agenda items ── */
+        .agenda-item {
+            border: 1.5px solid var(--border-light); border-radius: var(--radius-sm);
+            padding: 20px; margin-bottom: 14px; background: var(--bg);
+        }
+        .agenda-item-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 14px;
+        }
+        .agenda-item-num {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.07em; color: var(--purple);
+        }
+        .agenda-inner-group { margin-bottom: 12px; }
+        .agenda-inner-group:last-child { margin-bottom: 0; }
+        .agenda-inner-group label { display: block; margin-bottom: 6px; }
+
+        /* ── Buttons ── */
+        .btn-add {
+            display: flex; align-items: center; gap: 6px;
+            padding: 9px 16px; border: 1.5px dashed var(--border);
+            border-radius: var(--radius-sm); background: none;
+            color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; font-family: inherit;
+            transition: all var(--transition); width: 100%;
+            justify-content: center; margin-top: 4px;
+        }
+        .btn-add:hover { border-color: var(--purple); color: var(--purple); background: rgba(99,102,241,0.04); }
+
+        .btn-remove {
+            padding: 6px 10px; background: none;
+            border: 1.5px solid var(--border); border-radius: 8px;
+            color: var(--text-tertiary); cursor: pointer;
+            font-size: 0.82rem; font-family: inherit;
+            transition: all var(--transition); flex-shrink: 0; white-space: nowrap;
+        }
+        .btn-remove:hover { border-color: var(--error); color: var(--error); background: var(--error-bg); }
+
+        .btn-generate {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+            color: white; border: none; border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: all var(--transition);
+            box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99,102,241,0.4); }
+        .btn-generate:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+
+        /* ── Status ── */
+        .status {
+            margin-top: 14px; padding: 13px 18px; border-radius: var(--radius-sm);
+            font-size: 0.88rem; font-weight: 500; display: none;
+        }
+        .status.error  { background: var(--error-bg); color: var(--error); border: 1px solid #fca5a5; display: block; }
+        .status.success { background: var(--success-bg); color: #15803d; border: 1px solid #86efac; display: block; }
+
+        @media (max-width: 640px) {
+            .form-row { flex-direction: column; }
+            .form-group.narrow, .form-group.medium { flex: 1; }
+            .hero h1 { font-size: 1.8rem; }
+            .nav-links a { font-size: 0.78rem; padding: 6px 10px; }
+            .att-row { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-inner">
+        <a class="nav-brand" href="/">Academic Tools</a>
+        <div class="nav-links">
+            <a href="/">Gradebook</a>
+            <a href="/faculty">Faculty</a>
+            <a href="/records">Records</a>
+            <a href="/bonus">Bonus</a>
+            <a href="/referral">Referral</a>
+            <a href="/meeting" class="active">Meeting</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+        </svg>
+    </div>
+    <h1>Meeting Minutes</h1>
+    <p>Fill in the meeting details below and download the formatted official document.</p>
+</section>
+
+<main>
+
+    <!-- ── Meeting Details ── -->
+    <div class="card">
+        <div class="card-title">Meeting Details</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="f-date">Date <span class="req">*</span></label>
+                <input type="date" id="f-date" required>
+            </div>
+            <div class="form-group narrow">
+                <label for="f-number">Meeting #</label>
+                <input type="number" id="f-number" value="1" min="1">
+            </div>
+            <div class="form-group medium">
+                <label for="f-time">Time</label>
+                <input type="time" id="f-time">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="f-facilitator">Facilitator <span class="req">*</span></label>
+                <input type="text" id="f-facilitator" placeholder="e.g. Omar Tbeileh">
+            </div>
+            <div class="form-group">
+                <label for="f-location">Location</label>
+                <input type="text" id="f-location" placeholder="e.g. Mr. Omar's Office">
+            </div>
+            <div class="form-group narrow">
+                <label for="f-duration">Duration (min)</label>
+                <input type="number" id="f-duration" value="45" min="1">
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Attendees ── -->
+    <div class="card">
+        <div class="card-title">Attendees</div>
+        <div id="att-list"></div>
+        <button class="btn-add" onclick="addAttendee()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Attendee
+        </button>
+    </div>
+
+    <!-- ── Agenda Items ── -->
+    <div class="card">
+        <div class="card-title">Agenda Items &amp; Decisions</div>
+        <div id="agenda-list"></div>
+        <button class="btn-add" onclick="addAgendaItem()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Agenda Item
+        </button>
+    </div>
+
+    <!-- ── Additional Info ── -->
+    <div class="card">
+        <div class="card-title">Additional Info</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="f-apologies">Apologies for Absence</label>
+                <input type="text" id="f-apologies" value="None" placeholder="Names or None">
+            </div>
+            <div class="form-group">
+                <label for="f-next">Next Meeting Scheduled</label>
+                <input type="text" id="f-next" value="TBD" placeholder="Date or TBD">
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Generate ── -->
+    <button class="btn-generate" id="btn-gen" onclick="generate()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Generate &amp; Download Document
+    </button>
+    <div id="status" class="status"></div>
+
+</main>
+
+<script>
+    let attSeq = 0, agSeq = 0;
+
+    // ── Attendees ───────────────────────────────────────────────────────────
+    function addAttendee(name = '', dept = 'Computer Engineering Technology') {
+        const id = ++attSeq;
+        const div = document.createElement('div');
+        div.className = 'att-row';
+        div.id = `att-${id}`;
+        div.innerHTML = `
+            <input type="text" placeholder="Full name" value="${esc(name)}" class="att-name">
+            <input type="text" placeholder="Department" value="${esc(dept)}" class="att-dept">
+            <button class="btn-remove" onclick="document.getElementById('att-${id}').remove()">× Remove</button>`;
+        document.getElementById('att-list').appendChild(div);
+    }
+
+    function getAttendees() {
+        return Array.from(document.querySelectorAll('.att-row')).map(r => ({
+            name: r.querySelector('.att-name').value.trim(),
+            dept: r.querySelector('.att-dept').value.trim() || 'Computer Engineering Technology'
+        })).filter(a => a.name);
+    }
+
+    // ── Agenda items ────────────────────────────────────────────────────────
+    function addAgendaItem(topic = '', decisions = '') {
+        const id = ++agSeq;
+        const div = document.createElement('div');
+        div.className = 'agenda-item';
+        div.id = `ag-${id}`;
+        div.innerHTML = `
+            <div class="agenda-item-header">
+                <span class="agenda-item-num">Item ${document.querySelectorAll('.agenda-item').length + 1}</span>
+                <button class="btn-remove" onclick="removeAgenda(${id})">× Remove</button>
+            </div>
+            <div class="agenda-inner-group">
+                <label>Agenda Topic <span class="req">*</span></label>
+                <input type="text" placeholder="e.g. Moodle Pages & Course Material" class="ag-topic" value="${esc(topic)}">
+            </div>
+            <div class="agenda-inner-group">
+                <label>Decisions</label>
+                <textarea class="ag-decisions" placeholder="Write the decisions made for this agenda item...">${esc(decisions)}</textarea>
+            </div>`;
+        document.getElementById('agenda-list').appendChild(div);
+    }
+
+    function removeAgenda(id) {
+        const el = document.getElementById(`ag-${id}`);
+        if (el) el.remove();
+        document.querySelectorAll('.agenda-item-num').forEach((lbl, i) => {
+            lbl.textContent = `Item ${i + 1}`;
+        });
+    }
+
+    function getAgenda() {
+        return Array.from(document.querySelectorAll('.agenda-item')).map(el => ({
+            topic:     el.querySelector('.ag-topic').value.trim(),
+            decisions: el.querySelector('.ag-decisions').value.trim()
+        })).filter(a => a.topic);
+    }
+
+    // ── Generate ─────────────────────────────────────────────────────────────
+    async function generate() {
+        const statusEl = document.getElementById('status');
+        statusEl.className = 'status';
+
+        const date        = document.getElementById('f-date').value;
+        const facilitator = document.getElementById('f-facilitator').value.trim();
+        const agenda      = getAgenda();
+
+        if (!date)        { showError('Please select a meeting date.'); return; }
+        if (!facilitator) { showError('Please enter the facilitator name.'); return; }
+        if (!agenda.length) { showError('Please add at least one agenda item.'); return; }
+
+        const btn = document.getElementById('btn-gen');
+        btn.disabled = true;
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Generating…`;
+
+        const timeRaw = document.getElementById('f-time').value;
+        const timeStr = timeRaw ? formatTime(timeRaw) : 'TBD';
+
+        const payload = {
+            date,
+            number:       parseInt(document.getElementById('f-number').value) || 1,
+            facilitator,
+            time:         timeStr,
+            duration:     document.getElementById('f-duration').value || '45',
+            location:     document.getElementById('f-location').value.trim() || 'Meeting Room',
+            attendees:    getAttendees(),
+            agenda,
+            apologies:    document.getElementById('f-apologies').value.trim() || 'None',
+            next_meeting: document.getElementById('f-next').value.trim() || 'TBD',
+        };
+
+        try {
+            const res = await fetch('/meeting/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+                showError(err.error || 'Generation failed.');
+                return;
+            }
+
+            const blob = await res.blob();
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = `Meeting_${payload.number}_${date.replace(/-/g,'')}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            statusEl.className   = 'status success';
+            statusEl.textContent = '✓ Document generated and downloaded successfully.';
+
+        } catch (e) {
+            showError('Network error: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generate &amp; Download Document`;
+        }
+    }
+
+    function showError(msg) {
+        const s = document.getElementById('status');
+        s.className = 'status error';
+        s.textContent = '⚠ ' + msg;
+    }
+
+    function formatTime(t) {
+        const [h, m] = t.split(':').map(Number);
+        const ampm = h >= 12 ? 'pm' : 'am';
+        const h12  = h % 12 || 12;
+        return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+    }
+
+    function esc(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // Initialise with one attendee slot and one agenda item
+    addAttendee();
+    addAgendaItem();
+</script>
+</body>
+</html>

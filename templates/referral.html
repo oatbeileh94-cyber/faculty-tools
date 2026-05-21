@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Referral</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-tertiary: #86868b;
+            --accent: #0071e3;
+            --accent-hover: #0077ED;
+            --success: #30d158;
+            --success-bg: #f0fdf4;
+            --error: #ff3b30;
+            --error-bg: #fef2f2;
+            --warn: #ff9f0a;
+            --warn-bg: #fff8ee;
+            --info-bg: #eff6ff;
+            --border: #d2d2d7;
+            --border-light: #e8e8ed;
+            --nav-bg: rgba(251, 251, 253, 0.8);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all var(--transition);
+        }
+        .nav-links a:hover { color: var(--text-primary); background: rgba(0,0,0,0.04); }
+        .nav-links a.active { color: var(--accent); background: rgba(0,113,227,0.08); }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 64px 24px 20px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .hero-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(249,115,22,0.3);
+        }
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ── Main ── */
+        .main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 24px 80px;
+        }
+
+        /* ── Upload card ── */
+        .upload-card {
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 40px 28px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition);
+            margin-bottom: 20px;
+        }
+        .upload-card:hover { border-color: var(--accent); box-shadow: 0 4px 20px rgba(0,113,227,0.1); transform: translateY(-2px); }
+        .upload-card.loaded { border-color: var(--success); border-style: solid; background: var(--success-bg); }
+        .upload-card input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
+        .upload-icon { color: var(--text-tertiary); margin-bottom: 12px; }
+        .upload-card.loaded .upload-icon { color: var(--success); }
+        .upload-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+        .upload-hint { color: var(--text-tertiary); font-size: 0.85rem; }
+        .upload-filename { color: var(--success); font-weight: 600; font-size: 0.88rem; margin-top: 8px; }
+
+        .btn-parse {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: var(--accent);
+            color: #fff;
+            transition: all var(--transition);
+            font-family: inherit;
+            letter-spacing: -0.01em;
+            margin-bottom: 24px;
+        }
+        .btn-parse:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-parse:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* ── Status ── */
+        .status {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .status.success { background: var(--success-bg); color: #166534; display: block; }
+        .status.error { background: var(--error-bg); color: #991b1b; display: block; }
+        .status.info { background: var(--info-bg); color: #1e40af; display: block; }
+
+        /* ── Course info card ── */
+        .course-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: none;
+        }
+        .course-card-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+        .course-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        .course-meta-item label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            display: block;
+            margin-bottom: 2px;
+        }
+        .course-meta-item span {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ── Results section ── */
+        .results-section { display: none; }
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .results-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .badge-warn { background: var(--warn-bg); color: #92400e; }
+        .badge-ok { background: var(--success-bg); color: #166534; }
+
+        /* ── Student table ── */
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        thead { background: #f5f5f7; }
+        th {
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+            white-space: nowrap;
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fbfbfd; }
+        .student-name { font-weight: 600; color: var(--text-primary); }
+        .student-id { font-size: 0.8rem; color: var(--text-tertiary); margin-top: 2px; }
+
+        .issue-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 2px 2px 2px 0;
+        }
+        .issue-absent { background: #fef2f2; color: #991b1b; }
+        .issue-weak { background: #fff8ee; color: #92400e; }
+
+        .btn-referral {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 13px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+        .btn-referral:hover { background: var(--accent-hover); }
+        .btn-referral.download {
+            background: #166534;
+        }
+        .btn-referral.download:hover { background: #14532d; }
+        .btn-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* ── Referral preview panel ── */
+        .referral-panel {
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+        .referral-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .referral-panel-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .btn-close-panel {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: 0 4px;
+        }
+        .referral-script {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.83rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            background: #f5f5f7;
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            word-break: break-word;
+        }
+        .panel-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .btn-panel-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all var(--transition);
+            color: #fff;
+        }
+        .btn-panel-action.copy { background: var(--accent); }
+        .btn-panel-action.copy:hover { background: var(--accent-hover); }
+        .btn-panel-action.docx { background: #166534; }
+        .btn-panel-action.docx:hover { background: #14532d; }
+        .btn-panel-action:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .no-flag-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 600px) {
+            .nav-links a { font-size: 0.78rem; padding: 6px 10px; }
+            .hero h1 { font-size: 1.8rem; }
+            .course-meta { grid-template-columns: 1fr 1fr; }
+            th, td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a class="nav-brand" href="/">Academic Tools</a>
+            <div class="nav-links">
+                <a href="/">Gradebook</a>
+                <a href="/faculty">Faculty</a>
+                <a href="/records">Records</a>
+                <a href="/bonus">Bonus</a>
+                <a href="/referral" class="active">Referral</a>
+                <a href="/meeting">Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+        </div>
+        <h1>Lab Referral</h1>
+        <p>Upload an Expected Grade Report to identify students who missed or underperformed in 2 consecutive labs.</p>
+    </div>
+
+    <div class="main">
+        <div class="upload-card" id="uploadCard">
+            <input type="file" id="fileInput" accept=".xlsx,.xls">
+            <div class="upload-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+            </div>
+            <div class="upload-title">Upload Expected Grade Report</div>
+            <div class="upload-hint">ExpectedGradeReport_*.xlsx</div>
+            <div class="upload-filename" id="uploadFilename" style="display:none;"></div>
+        </div>
+
+        <button class="btn-parse" id="parseBtn" disabled onclick="parseFile()">Analyze File</button>
+
+        <div class="status" id="statusEl"></div>
+
+        <!-- Course Info -->
+        <div class="course-card" id="courseCard">
+            <div class="course-card-title">Course Information</div>
+            <div class="course-meta" id="courseMeta"></div>
+        </div>
+
+        <!-- Referral preview panel -->
+        <div class="referral-panel" id="referralPanel">
+            <div class="referral-panel-header">
+                <div class="referral-panel-title">Referral Preview</div>
+                <button class="btn-close-panel" onclick="closePanel()" title="Close">&times;</button>
+            </div>
+            <div class="referral-script" id="referralScript"></div>
+            <div class="panel-actions">
+                <button class="btn-panel-action copy" id="copyBtn" onclick="copyReferral()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                    </svg>
+                    Copy Text
+                </button>
+                <button class="btn-panel-action docx" id="downloadBtn" onclick="downloadDocx()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Download as Word
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <div class="results-title">Flagged Students</div>
+                <div class="badge" id="resultsBadge"></div>
+            </div>
+            <div id="resultsBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadCard = document.getElementById('uploadCard');
+        const parseBtn = document.getElementById('parseBtn');
+        const statusEl = document.getElementById('statusEl');
+
+        let parsedData = null;
+        let courseInfo = null;
+        const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            uploadCard.classList.add('loaded');
+            document.getElementById('uploadFilename').textContent = file.name;
+            document.getElementById('uploadFilename').style.display = 'block';
+            parseBtn.disabled = false;
+        });
+
+        async function parseFile() {
+            const file = fileInput.files[0];
+            if (!file) return;
+            parseBtn.disabled = true;
+            parseBtn.textContent = 'Analyzing…';
+            showStatus('Parsing file…', 'info');
+
+            const fd = new FormData();
+            fd.append('file', file);
+
+            try {
+                const res = await fetch('/referral/parse', { method: 'POST', body: fd });
+                const data = await res.json();
+                if (data.error) {
+                    showStatus(data.error, 'error');
+                    parseBtn.disabled = false;
+                    parseBtn.textContent = 'Analyze File';
+                    return;
+                }
+                parsedData = data.flagged;
+                courseInfo = data.course_info;
+                renderCourseCard(data.course_info);
+                renderResults(data.flagged, data.total_flagged);
+                showStatus(
+                    data.total_flagged > 0
+                        ? `Found ${data.total_flagged} student${data.total_flagged > 1 ? 's' : ''} requiring referral.`
+                        : 'No students flagged — all students have consistent lab performance.',
+                    data.total_flagged > 0 ? 'success' : 'info'
+                );
+            } catch (e) {
+                showStatus('Failed to parse file: ' + e.message, 'error');
+            }
+            parseBtn.disabled = false;
+            parseBtn.textContent = 'Analyze File';
+        }
+
+        function renderCourseCard(info) {
+            const card = document.getElementById('courseCard');
+            const meta = document.getElementById('courseMeta');
+            const fields = [
+                ['Term', info.term || '—'],
+                ['Course Code', info.course_code || '—'],
+                ['Course Title', info.course_title || '—'],
+                ['HOD', info.hod || '—'],
+                ['Dean', info.dean || '—'],
+                ['No. of Students', info.n_students || '—'],
+            ];
+            meta.innerHTML = fields.map(([label, val]) =>
+                `<div class="course-meta-item"><label>${label}</label><span>${val}</span></div>`
+            ).join('');
+            card.style.display = 'block';
+        }
+
+        function renderResults(flagged, total) {
+            const section = document.getElementById('resultsSection');
+            const badge = document.getElementById('resultsBadge');
+            const body = document.getElementById('resultsBody');
+            section.style.display = 'block';
+
+            if (total === 0) {
+                badge.textContent = '0 flagged';
+                badge.className = 'badge badge-ok';
+                body.innerHTML = '<div class="no-flag-msg">No students flagged for referral.</div>';
+                return;
+            }
+
+            badge.textContent = `${total} flagged`;
+            badge.className = 'badge badge-warn';
+
+            const rows = flagged.map((s, idx) => {
+                const issueTags = s.consecutive_issues.map(pair => {
+                    const l1 = s.lab_summary.find(x => x.lab === pair[0]);
+                    const l2 = s.lab_summary.find(x => x.lab === pair[1]);
+                    const tag1 = issueTag(l1);
+                    const tag2 = issueTag(l2);
+                    return `${tag1} ${tag2}`;
+                }).join('<br>');
+
+                return `<tr>
+                    <td>
+                        <div class="student-name">${s.name}</div>
+                        <div class="student-id">${s.id} &nbsp;·&nbsp; ${s.major}</div>
+                    </td>
+                    <td>${s.section}</td>
+                    <td>${s.instructor}</td>
+                    <td>${s.after_avg ? s.after_avg + ' (' + s.after_grd + ')' : '—'}</td>
+                    <td>${issueTags}</td>
+                    <td>
+                        <div class="btn-actions">
+                            <button class="btn-referral" onclick="generateReferral(${idx})">Preview</button>
+                            <button class="btn-referral download" onclick="downloadDocx(${idx})">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                .docx
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+
+            body.innerHTML = `<div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Section</th>
+                            <th>Instructor</th>
+                            <th>Grade</th>
+                            <th>Consecutive Issues</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+        }
+
+        function issueTag(labInfo) {
+            if (!labInfo) return '';
+            const cls = labInfo.status === 'absent' ? 'issue-absent' : 'issue-weak';
+            const label = labInfo.status === 'absent'
+                ? `Lab ${labInfo.lab}: Absent`
+                : `Lab ${labInfo.lab}: ${labInfo.avg !== null ? labInfo.avg + '%' : 'Weak'}`;
+            return `<span class="issue-tag ${cls}">${label}</span>`;
+        }
+
+        let activeStudentIdx = null;
+
+        function labDesc(l) {
+            if (!l) return '';
+            if (l.status === 'absent') return `Lab ${l.lab} (Absent)`;
+            return `Lab ${l.lab} (${l.avg !== null ? l.avg + '%' : 'below 60%'})`;
+        }
+
+        function buildPreviewText(s, ci) {
+            const courseCode = (ci.course_code || '').split(/\s+/)[0];
+            const absentLabs = s.lab_summary.filter(l => l.status === 'absent');
+            const weakLabs   = s.lab_summary.filter(l => l.status === 'weak');
+
+            const absentStr = absentLabs.length
+                ? absentLabs.map(l => `Lab ${l.lab}`).join(',  ')
+                : 'None';
+            const weakStr = weakLabs.length
+                ? weakLabs.map(l => `Lab ${l.lab}: ${l.avg !== null ? l.avg + '%' : '< 60%'}`).join('\n  ')
+                : 'None';
+
+            const consecutiveStr = s.consecutive_issues.map(pair => {
+                const l1 = s.lab_summary.find(x => x.lab === pair[0]);
+                const l2 = s.lab_summary.find(x => x.lab === pair[1]);
+                const bothAbsent = l1?.status === 'absent' && l2?.status === 'absent';
+                const action = bothAbsent ? 'Missed' : 'Underperformed in';
+                return `  • ${action} ${labDesc(l1)} and ${labDesc(l2)} consecutively.`;
+            }).join('\n');
+
+            const labSummaryStr = s.lab_summary.map(l => {
+                const st = l.status === 'absent' ? 'Absent'
+                    : l.status === 'weak'   ? `${l.avg !== null ? l.avg + '%' : '< 60%'}  (Weak)`
+                    : l.status === 'ok'     ? `${l.avg !== null ? l.avg + '%' : 'OK'}  (OK)`
+                    : 'N/A';
+                return `  Lab ${l.lab}:  ${st}`;
+            }).join('\n');
+
+            return `Student Referral Form
+${'─'.repeat(55)}
+Student Name  :  ${s.name}
+Student ID    :  ${s.id}
+Major         :  ${s.major}
+Current Grade :  ${s.after_avg} (${s.after_grd})   |   GPA: ${s.gpa}   |   Status: ${s.acd}
+
+Instructor    :  ${s.instructor}
+Course Code   :  ${courseCode}
+Section       :  ${s.section}
+Semester      :  ${ci.term || '—'}
+
+${'─'.repeat(55)}
+ATTENDANCE ISSUES:
+  Absent from: ${absentStr}
+
+WEAK PERFORMANCE ISSUES  (score < 60%):
+  ${weakStr}
+
+CONSECUTIVE ISSUES IDENTIFIED:
+${consecutiveStr}
+
+FULL LAB PERFORMANCE SUMMARY:
+${labSummaryStr}`;
+        }
+
+        function generateReferral(idx) {
+            activeStudentIdx = idx;
+            const s = parsedData[idx];
+            const panel = document.getElementById('referralPanel');
+            document.getElementById('referralScript').textContent = buildPreviewText(s, courseInfo || {});
+            document.getElementById('copyBtn').textContent = 'Copy Text';
+            document.getElementById('downloadBtn').textContent = 'Download as Word';
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        async function downloadDocx(idx) {
+            const i = (idx !== undefined) ? idx : activeStudentIdx;
+            if (i === null || i === undefined) return;
+            const btn = (idx !== undefined)
+                ? document.querySelectorAll('.btn-referral.download')[i]
+                : document.getElementById('downloadBtn');
+            const orig = btn.innerHTML;
+            btn.disabled = true;
+            btn.textContent = 'Generating…';
+
+            try {
+                const res = await fetch('/referral/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ student: parsedData[i], course_info: courseInfo }),
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert('Error: ' + (err.error || 'Unknown error'));
+                    return;
+                }
+                const blob = await res.blob();
+                const disposition = res.headers.get('Content-Disposition') || '';
+                const fnMatch = disposition.match(/filename="?([^"]+)"?/);
+                const filename = fnMatch ? fnMatch[1] : 'Referral.docx';
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch (e) {
+                alert('Download failed: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = orig;
+            }
+        }
+
+        function closePanel() {
+            document.getElementById('referralPanel').style.display = 'none';
+            activeStudentIdx = null;
+        }
+
+        function copyReferral() {
+            const text = document.getElementById('referralScript').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = 'Copy Text'; }, 2000);
+            });
+        }
+
+        function showStatus(msg, type) {
+            statusEl.textContent = msg;
+            statusEl.className = 'status ' + type;
+        }
+    </script>
+</body>
+</html>

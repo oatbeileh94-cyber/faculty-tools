@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Member Records</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-tertiary: #86868b;
+            --accent: #0071e3;
+            --accent-hover: #0077ED;
+            --success: #30d158;
+            --success-bg: #f0fdf4;
+            --error: #ff3b30;
+            --error-bg: #fef2f2;
+            --info-bg: #eff6ff;
+            --border: #d2d2d7;
+            --border-light: #e8e8ed;
+            --nav-bg: rgba(251, 251, 253, 0.8);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: rgba(0,0,0,0.04);
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+            background: rgba(0,113,227,0.08);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 80px 24px 20px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .hero-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(16,185,129,0.3);
+        }
+
+        .hero-icon svg {
+            width: 36px;
+            height: 36px;
+            color: #fff;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-weight: 400;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ── Main ── */
+        .main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px 24px 80px;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        /* ── Form elements ── */
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            letter-spacing: -0.01em;
+        }
+
+        .form-select,
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: var(--surface);
+            color: var(--text-primary);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236e6e73' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        .form-select:focus,
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0,113,227,0.12);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group { display: flex; flex-direction: column; }
+
+        /* ── Button ── */
+        .btn {
+            padding: 14px 28px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            letter-spacing: -0.01em;
+            font-family: inherit;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,113,227,0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 16px rgba(0,113,227,0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #d2d2d7;
+            color: #fff;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ── Status ── */
+        .status {
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            display: none;
+            line-height: 1.5;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .status.success { display: block; background: var(--success-bg); color: #166534; border: 1px solid #bbf7d0; }
+        .status.error { display: block; background: var(--error-bg); color: #991b1b; border: 1px solid #fecaca; }
+
+        /* ── Filters ── */
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* ── Records table ── */
+        .records-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--surface);
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .records-table th {
+            background: #fafafa;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 0;
+        }
+
+        .records-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+        }
+
+        .records-table tbody tr {
+            transition: background var(--transition);
+        }
+
+        .records-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .records-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .records-table tr.achievement td:first-child {
+            border-left: 3px solid var(--success);
+        }
+
+        .records-table tr.refusal td:first-child {
+            border-left: 3px solid var(--error);
+        }
+
+        .records-table tr.note td:first-child {
+            border-left: 3px solid var(--border);
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            letter-spacing: 0.01em;
+        }
+
+        .type-badge.achievement { background: #dcfce7; color: #166534; }
+        .type-badge.refusal { background: #fecaca; color: #991b1b; }
+        .type-badge.note { background: #e8e8ed; color: #48484a; }
+
+        .delete-btn {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn:hover {
+            background: var(--error-bg);
+            color: var(--error);
+            border-color: #fecaca;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-tertiary);
+            font-size: 0.95rem;
+        }
+
+        .empty-msg svg {
+            display: block;
+            margin: 0 auto 16px;
+            color: var(--border);
+        }
+
+        /* ── Export button ── */
+        .btn-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--surface);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+
+        .btn-export:hover {
+            background: rgba(0,113,227,0.06);
+            box-shadow: 0 2px 8px rgba(0,113,227,0.12);
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeUp 0.5s ease; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .hero { padding: 60px 20px 16px; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .main { padding: 20px 16px 60px; }
+            .nav-links a { font-size: 0.78rem; padding: 6px 10px; }
+            .card { padding: 20px; }
+            .form-row { grid-template-columns: 1fr !important; }
+            .filter-row { grid-template-columns: 1fr 1fr !important; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">EduTools</a>
+            <div class="nav-links">
+                <a href="/">Gradebook</a>
+                <a href="/faculty">Faculty</a>
+                <a href="/records" class="active">Records</a>
+                <a href="/bonus">Bonus</a>
+                <a href="/referral">Referral</a>
+                <a href="/meeting">Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero fade-in">
+        <div class="hero-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+            </svg>
+        </div>
+        <h1>Team Records</h1>
+        <p>Track achievements, refusals, and notes for your team members</p>
+    </div>
+
+    <div class="main fade-in">
+        <div class="status" id="status"></div>
+
+        <div class="card">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="memberSelect">Team Member</label>
+                    <select class="form-select" id="memberSelect">
+                        <option value="">-- Select member --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="typeSelect">Record Type</label>
+                    <select class="form-select" id="typeSelect">
+                        <option value="achievement">Achievement</option>
+                        <option value="refusal">Refusal</option>
+                        <option value="note">Note</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="dateInput">Date</label>
+                    <input class="form-input" type="date" id="dateInput">
+                </div>
+            </div>
+            <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+                <div class="form-group">
+                    <label class="form-label" for="semesterSelect">Semester</label>
+                    <select class="form-select" id="semesterSelect">
+                        <option value="">-- Select semester --</option>
+                        <option value="Fall">Fall</option>
+                        <option value="Spring">Spring</option>
+                        <option value="Summer">Summer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="yearSelect">Year</label>
+                    <select class="form-select" id="yearSelect">
+                        <option value="">-- Select year --</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label class="form-label" for="descInput">Description</label>
+                <textarea class="form-textarea" id="descInput" placeholder="Enter details about this record..."></textarea>
+            </div>
+            <button class="btn btn-primary" id="addBtn" disabled>Add Record</button>
+        </div>
+
+        <div class="filter-row" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="form-group">
+                <label class="form-label" for="filterMember">Filter by Member</label>
+                <select class="form-select" id="filterMember">
+                    <option value="">All Members</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="filterType">Filter by Type</label>
+                <select class="form-select" id="filterType">
+                    <option value="">All Types</option>
+                    <option value="achievement">Achievement</option>
+                    <option value="refusal">Refusal</option>
+                    <option value="note">Note</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="filterSemester">Semester</label>
+                <select class="form-select" id="filterSemester">
+                    <option value="">All Semesters</option>
+                    <option value="Fall">Fall</option>
+                    <option value="Spring">Spring</option>
+                    <option value="Summer">Summer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="filterYear">Year</label>
+                <select class="form-select" id="filterYear">
+                    <option value="">All Years</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-bottom:20px; text-align:right;">
+            <a class="btn-export" id="exportBtn" href="/records/export">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Download as Excel
+            </a>
+        </div>
+
+        <div class="records-wrapper" id="recordsWrapper">
+            <table class="records-table" id="recordsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Member</th>
+                        <th>Type</th>
+                        <th>Semester</th>
+                        <th>Year</th>
+                        <th>Description</th>
+                        <th style="width:52px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="recordsBody"></tbody>
+            </table>
+        </div>
+        <div class="empty-msg" id="emptyMsg" style="display:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>
+            No records yet. Add your first record above.
+        </div>
+    </div>
+
+    <script>
+        const memberSelect = document.getElementById('memberSelect');
+        const typeSelect = document.getElementById('typeSelect');
+        const dateInput = document.getElementById('dateInput');
+        const semesterSelect = document.getElementById('semesterSelect');
+        const yearSelect = document.getElementById('yearSelect');
+        const descInput = document.getElementById('descInput');
+        const addBtn = document.getElementById('addBtn');
+        const filterMember = document.getElementById('filterMember');
+        const filterType = document.getElementById('filterType');
+        const filterSemester = document.getElementById('filterSemester');
+        const filterYear = document.getElementById('filterYear');
+        const recordsBody = document.getElementById('recordsBody');
+        const recordsWrapper = document.getElementById('recordsWrapper');
+        const emptyMsg = document.getElementById('emptyMsg');
+        const statusEl = document.getElementById('status');
+
+        let allRecords = [];
+
+        dateInput.valueAsDate = new Date();
+
+        // Populate year dropdowns (current year to 2035)
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y <= 2035; y++) {
+            yearSelect.appendChild(new Option(y, y));
+            filterYear.appendChild(new Option(y, y));
+        }
+
+        memberSelect.addEventListener('change', checkReady);
+        descInput.addEventListener('input', checkReady);
+        addBtn.addEventListener('click', addRecord);
+        filterMember.addEventListener('change', renderTable);
+        filterType.addEventListener('change', renderTable);
+        filterSemester.addEventListener('change', renderTable);
+        filterYear.addEventListener('change', renderTable);
+
+        function checkReady() {
+            addBtn.disabled = !(memberSelect.value && descInput.value.trim());
+        }
+
+        fetch('/faculty/status')
+            .then(r => r.json())
+            .then(data => {
+                if (data.exists && data.names) {
+                    data.names.forEach(name => {
+                        memberSelect.appendChild(new Option(name, name));
+                        filterMember.appendChild(new Option(name, name));
+                    });
+                }
+            });
+
+        loadRecords();
+
+        function loadRecords() {
+            fetch('/records/data')
+                .then(r => r.json())
+                .then(data => {
+                    allRecords = data.records || [];
+                    renderTable();
+                });
+        }
+
+        function renderTable() {
+            const fm = filterMember.value;
+            const ft = filterType.value;
+            const fs = filterSemester.value;
+            const fy = filterYear.value;
+
+            let filtered = allRecords;
+            if (fm) filtered = filtered.filter(r => r.name === fm);
+            if (ft) filtered = filtered.filter(r => r.type === ft);
+            if (fs) filtered = filtered.filter(r => r.semester === fs);
+            if (fy) filtered = filtered.filter(r => r.year === fy);
+
+            filtered.sort((a, b) => b.date.localeCompare(a.date));
+
+            if (filtered.length === 0) {
+                recordsBody.innerHTML = '';
+                recordsWrapper.style.display = 'none';
+                emptyMsg.style.display = 'block';
+                return;
+            }
+
+            emptyMsg.style.display = 'none';
+            recordsWrapper.style.display = 'block';
+
+            recordsBody.innerHTML = filtered.map(r =>
+                '<tr class="' + esc(r.type) + '">'
+                + '<td style="white-space:nowrap;color:var(--text-secondary);font-size:0.83rem;">' + esc(r.date) + '</td>'
+                + '<td style="font-weight:600;">' + esc(r.name) + '</td>'
+                + '<td><span class="type-badge ' + esc(r.type) + '">' + esc(r.type) + '</span></td>'
+                + '<td style="color:var(--text-secondary);font-size:0.83rem;">' + esc(r.semester || '') + '</td>'
+                + '<td style="color:var(--text-secondary);font-size:0.83rem;">' + esc(r.year || '') + '</td>'
+                + '<td style="color:var(--text-secondary);line-height:1.4;">' + esc(r.description) + '</td>'
+                + '<td><button class="delete-btn" onclick="deleteRecord(\'' + esc(r.id) + '\')" title="Delete">'
+                + '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>'
+                + '</button></td>'
+                + '</tr>'
+            ).join('');
+        }
+
+        function addRecord() {
+            const payload = {
+                name: memberSelect.value,
+                type: typeSelect.value,
+                description: descInput.value.trim(),
+                date: dateInput.value,
+                semester: semesterSelect.value,
+                year: yearSelect.value,
+            };
+
+            addBtn.disabled = true;
+            addBtn.textContent = 'Adding...';
+
+            fetch('/records/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            .then(r => r.json())
+            .then(data => {
+                addBtn.textContent = 'Add Record';
+                if (data.error) {
+                    showStatus(data.error, 'error');
+                    checkReady();
+                    return;
+                }
+                allRecords.push(data.record);
+                renderTable();
+                descInput.value = '';
+                checkReady();
+                showStatus('Record added successfully.', 'success');
+                setTimeout(() => { statusEl.className = 'status'; statusEl.style.display = 'none'; }, 2500);
+            })
+            .catch(err => {
+                addBtn.textContent = 'Add Record';
+                checkReady();
+                showStatus('Failed: ' + err, 'error');
+            });
+        }
+
+        function deleteRecord(id) {
+            if (!confirm('Delete this record?')) return;
+
+            fetch('/records/delete/' + id, { method: 'DELETE' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showStatus(data.error, 'error');
+                        return;
+                    }
+                    allRecords = allRecords.filter(r => r.id !== id);
+                    renderTable();
+                })
+                .catch(err => showStatus('Failed: ' + err, 'error'));
+        }
+
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = str || '';
+            return d.innerHTML;
+        }
+
+        function showStatus(msg, type) {
+            statusEl.textContent = msg;
+            statusEl.className = 'status ' + type;
+        }
+    </script>
+</body>
+</html>

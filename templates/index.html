@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Gradebook Filler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --surface-hover: #fbfbfd;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-tertiary: #86868b;
+            --accent: #0071e3;
+            --accent-hover: #0077ED;
+            --success: #30d158;
+            --success-bg: #f0fdf4;
+            --error: #ff3b30;
+            --error-bg: #fef2f2;
+            --info-bg: #eff6ff;
+            --border: #d2d2d7;
+            --border-light: #e8e8ed;
+            --nav-bg: rgba(251, 251, 253, 0.8);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: rgba(0,0,0,0.04);
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+            background: rgba(0,113,227,0.08);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 80px 24px 20px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .hero-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(102,126,234,0.3);
+        }
+
+        .hero-icon svg {
+            width: 36px;
+            height: 36px;
+            color: #fff;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-weight: 400;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ── Main content ── */
+        .main {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 24px 24px 80px;
+        }
+
+        /* ── Upload cards ── */
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .upload-card {
+            background: var(--surface);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition);
+            overflow: hidden;
+        }
+
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0,113,227,0.02) 0%, rgba(102,126,234,0.04) 100%);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .upload-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 20px rgba(0,113,227,0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-card:hover::before { opacity: 1; }
+
+        .upload-card.loaded {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .upload-card.loaded::before { opacity: 0; }
+
+        .upload-card input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .upload-card .step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .upload-card.loaded .step {
+            background: var(--success);
+        }
+
+        .upload-card .card-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .upload-card .card-hint {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .upload-card .file-name {
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 0.88rem;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            letter-spacing: -0.01em;
+            font-family: inherit;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,113,227,0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 16px rgba(0,113,227,0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #d2d2d7;
+            color: #fff;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+            margin-top: 12px;
+            display: none;
+            text-decoration: none;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(48,209,88,0.2);
+        }
+
+        .btn-success:hover {
+            background: #28c04e;
+            box-shadow: 0 4px 16px rgba(48,209,88,0.3);
+        }
+
+        /* ── Status ── */
+        .status {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            display: none;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .status.success { display: block; background: var(--success-bg); color: #166534; border: 1px solid #bbf7d0; }
+        .status.error { display: block; background: var(--error-bg); color: #991b1b; border: 1px solid #fecaca; }
+        .status.info { display: block; background: var(--info-bg); color: #1e40af; border: 1px solid #bfdbfe; }
+
+        /* ── Preview table ── */
+        .preview-section {
+            margin-top: 28px;
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .preview-section h3 {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .preview-scroll {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--surface);
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.83rem;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            padding: 10px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .preview-table th {
+            background: #fafafa;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 0;
+        }
+
+        .preview-table tr:last-child td { border-bottom: none; }
+        .preview-table tbody tr:hover { background: #fafafa; }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeUp 0.5s ease;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .hero { padding: 60px 20px 16px; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .main { padding: 20px 16px 60px; }
+            .nav-links a { font-size: 0.78rem; padding: 6px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">EduTools</a>
+            <div class="nav-links">
+                <a href="/" class="active">Gradebook</a>
+                <a href="/faculty">Faculty</a>
+                <a href="/records">Records</a>
+                <a href="/bonus">Bonus</a>
+                <a href="/referral">Referral</a>
+                <a href="/meeting">Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero fade-in">
+        <div class="hero-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+            </svg>
+        </div>
+        <h1>Gradebook Filler</h1>
+        <p>Upload your Expected Grade Report and gradebook template to auto-fill student information</p>
+    </div>
+
+    <div class="main fade-in">
+        <div class="upload-section">
+            <div class="upload-card" id="box1">
+                <input type="file" id="file1" accept=".xlsx">
+                <div class="step">1</div>
+                <div class="card-title">Expected Grade Report</div>
+                <div class="card-hint">Excel file (.xlsx) with "Students Grade" sheet</div>
+                <div class="file-name" id="file1-name"></div>
+            </div>
+
+            <div class="upload-card" id="box2">
+                <input type="file" id="file2" accept=".xlsx">
+                <div class="step">2</div>
+                <div class="card-title">Gradebook Template</div>
+                <div class="card-hint">Excel gradebook (.xlsx) with "students-info" tab</div>
+                <div class="file-name" id="file2-name"></div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" id="processBtn" disabled>Fill Gradebook</button>
+        <a class="btn btn-success" id="downloadBtn" href="#">Download Updated Gradebook</a>
+
+        <div class="status" id="status"></div>
+
+        <div class="preview-section" id="previewSection">
+            <h3>Preview (first 10 rows written)</h3>
+            <div class="preview-scroll">
+                <table class="preview-table" id="previewTable"></table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const file1Input = document.getElementById('file1');
+        const file2Input = document.getElementById('file2');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusEl = document.getElementById('status');
+        let file1Ready = false;
+        let file2Ready = false;
+
+        file1Input.addEventListener('change', handleFile1);
+        file2Input.addEventListener('change', handleFile2);
+        processBtn.addEventListener('click', processFiles);
+
+        function handleFile1(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('file1-name').textContent = file.name;
+            document.getElementById('box1').classList.add('loaded');
+
+            const formData = new FormData();
+            formData.append('student_list', file);
+
+            fetch('/headers', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showStatus(data.error, 'error');
+                        return;
+                    }
+                    file1Ready = true;
+                    checkReady();
+                    showStatus('Found "Students Grade" sheet. Student names and IDs will be extracted automatically.', 'info');
+                })
+                .catch(err => showStatus('Failed to read file: ' + err, 'error'));
+        }
+
+        function handleFile2(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('file2-name').textContent = file.name;
+            document.getElementById('box2').classList.add('loaded');
+            file2Ready = true;
+            checkReady();
+        }
+
+        function checkReady() {
+            processBtn.disabled = !(file1Ready && file2Ready);
+        }
+
+        function processFiles() {
+            if (!file1Ready || !file2Ready) return;
+
+            const formData = new FormData();
+            formData.append('student_list', file1Input.files[0]);
+            formData.append('gradebook', file2Input.files[0]);
+
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<span class="spinner"></span>Processing...';
+            downloadBtn.style.display = 'none';
+            document.getElementById('previewSection').style.display = 'none';
+
+            fetch('/upload', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    processBtn.innerHTML = 'Fill Gradebook';
+                    processBtn.disabled = false;
+
+                    if (data.error) {
+                        showStatus(data.error, 'error');
+                        return;
+                    }
+
+                    showStatus(data.message, 'success');
+
+                    downloadBtn.href = '/download/' + encodeURIComponent(data.filename);
+                    downloadBtn.style.display = 'block';
+                    downloadBtn.textContent = 'Download ' + data.original_name;
+
+                    if (data.preview && data.preview.length > 0) {
+                        showPreview(data.preview);
+                    }
+                })
+                .catch(err => {
+                    processBtn.innerHTML = 'Fill Gradebook';
+                    processBtn.disabled = false;
+                    showStatus('Request failed: ' + err, 'error');
+                });
+        }
+
+        function showPreview(rows) {
+            const section = document.getElementById('previewSection');
+            const table = document.getElementById('previewTable');
+
+            let html = '<thead><tr><th>#</th><th>First Name</th><th>Last Name</th><th>ID</th></tr></thead><tbody>';
+            rows.forEach((row, i) => {
+                html += '<tr><td>' + (i + 1) + '</td><td>' + esc(row.first) + '</td><td>' + esc(row.last) + '</td><td>' + esc(row.id) + '</td></tr>';
+            });
+            html += '</tbody>';
+            table.innerHTML = html;
+            section.style.display = 'block';
+        }
+
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        function showStatus(msg, type) {
+            statusEl.textContent = msg;
+            statusEl.className = 'status ' + type;
+        }
+    </script>
+</body>
+</html>
